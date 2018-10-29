@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router,ActivatedRoute } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
 
   errorMessage: string;
 
-  constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute) { }
+  constructor(private fb: FormBuilder,private authService: AuthService, private router: Router, private route: ActivatedRoute) { }
 
   return = '';
 
@@ -28,11 +29,19 @@ export class LoginComponent implements OnInit {
 	 */
   buildLoginForm() {
     this.loginForm = this.fb.group({
-      'email': [''],
-      'password': ['']
+      'email': ['',[Validators.required,Validators.email]],
+      'password': ['', Validators.required]
     });
   }
 
   loginHandler(user) {
+    if(user.email == "admin@eezeeorder.com" && user.password == "root"){
+      this.authService.isLogged=true;
+      this.router.navigateByUrl("dashboard");
+    }
+    else{
+      this.errorMessage = "Unauthorised User";
+    }
   }
+ 
 }
